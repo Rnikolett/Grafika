@@ -44,6 +44,11 @@ void render_scene(const Scene* scene);
 /**
  * Draw the origin of the world coordinate system.
  */
-void draw_maze();
+void draw_origin();
+
+/**
+ * Draw the maze.
+ */
+void draw_maze(const Scene* scene);
 
 #endif /* SCENE_H */

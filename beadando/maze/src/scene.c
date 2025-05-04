@@ -26,22 +26,25 @@ int maze[MAZE_H][MAZE_W] = {
 
 void init_scene(Scene* scene)
 {
-    // load_model(&(scene->cube), "assets/models/cube.obj");
-    // scene->texture_id = load_texture("assets/textures/cube.png");
+	//background color
+	glClearColor(0.0f, 0.5f, 1.0f, 1.0f);
 	
     //load_model(&(scene->cube), "assets/models/cube.obj");
     //scene->texture_id = load_texture("assets/textures/cube.png");
+	
+	scene->texture_id = load_texture("assets/textures/brickTexture.png");
+	
+	
+	//glEnable(GL_TEXTURE_2D);
+	//glBindTexture(GL_TEXTURE_2D, scene->texture_id);
+    
+    scene->material.ambient.red = 0.5;
+    scene->material.ambient.green = 0.4;
+    scene->material.ambient.blue = 0.3;
 
-	glClearColor(0.0f, 0.5f, 1.0f, 1.0f);
-    glBindTexture(GL_TEXTURE_2D, scene->texture_id);
-
-    scene->material.ambient.red = 0.0;
-    scene->material.ambient.green = 0.0;
-    scene->material.ambient.blue = 0.0;
-
-    scene->material.diffuse.red = 1.0;
-    scene->material.diffuse.green = 1.0;
-    scene->material.diffuse.blue = 0.0;
+    scene->material.diffuse.red = 0.5;
+    scene->material.diffuse.green = 0.5;
+    scene->material.diffuse.blue = 0.5;
 
     scene->material.specular.red = 0.0;
     scene->material.specular.green = 0.0;
@@ -98,16 +101,40 @@ void render_scene(const Scene* scene)
 {
     set_material(&(scene->material));
     set_lighting();
-    draw_maze();
-    //draw_model(&(scene->cube));
+	
+    draw_maze(&scene);
+    draw_model(&(scene->cube));
 }
 
-float player_x = 1.5f, player_y = 1.5f, player_angle = 0.0f;
-
-void draw_maze()
+void draw_origin()
 {
-glBegin(GL_QUADS);
+    glBegin(GL_LINES);
 
+    glColor3f(1, 0, 0);
+    glVertex3f(0, 0, 0);
+    glVertex3f(1, 0, 0);
+
+    glColor3f(0, 1, 0);
+    glVertex3f(0, 0, 0);
+    glVertex3f(0, 1, 0);
+
+    glColor3f(0, 0, 1);
+    glVertex3f(0, 0, 0);
+    glVertex3f(0, 0, 1);
+
+    glEnd();
+}
+
+void draw_maze(const Scene* scene)
+{
+    glLineWidth(1.0f); 
+	
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    glEnable(GL_TEXTURE_2D);
+    // Bind the texture
+    glBindTexture(GL_TEXTURE_2D, scene->texture_id);
+
+glBegin(GL_QUADS);
 //glColor3f(1, 0, 0);
 //floor
 glVertex3f(-3, 2, 0);
@@ -115,77 +142,147 @@ glVertex3f(3, 2, 0);
 glVertex3f(3, -2, 0);
 glVertex3f(-3, -2, 0);
 
-//behind
-glVertex3f(-3, 2, 0);
-glVertex3f(-3, 2, 1);
-glVertex3f(-3, -2, 1);
-glVertex3f(-3, -2, 0);
+    // Behind wall
+    glTexCoord2f(0.0f, 0.0f);
+    glVertex3f(-3, 2, 0);
+    glTexCoord2f(1.0f, 0.0f);
+    glVertex3f(-3, 2, 1);
+    glTexCoord2f(1.0f, 1.0f);
+    glVertex3f(-3, -2, 1);
+    glTexCoord2f(0.0f, 1.0f);
+    glVertex3f(-3, -2, 0);
 
-//right
-glVertex3f(-3, -2, 0);
-glVertex3f(-3, -2, 1);
-glVertex3f(1, -2, 1);
-glVertex3f(1, -2, 0);
+    // Right wall
+    glTexCoord2f(0.0f, 0.0f);
+    glVertex3f(-3, -2, 0);
+    glTexCoord2f(1.0f, 0.0f);
+    glVertex3f(-3, -2, 1);
+    glTexCoord2f(1.0f, 1.0f);
+    glVertex3f(1, -2, 1);
+    glTexCoord2f(0.0f, 1.0f);
+    glVertex3f(1, -2, 0);
 
+glTexCoord2f(0.0f, 0.0f);
 glVertex3f(2, -2, 0);
+glTexCoord2f(1.0f, 0.0f);
 glVertex3f(2, -2, 1);
+glTexCoord2f(1.0f, 1.0f);
 glVertex3f(3, -2, 1);
+glTexCoord2f(0.0f, 1.0f);
 glVertex3f(3, -2, 0);
 
 //left
+glTexCoord2f(0.0f, 0.0f);
 glVertex3f(-1, 2, 0);
+glTexCoord2f(1.0f, 0.0f);
 glVertex3f(-1, 2, 1);
+glTexCoord2f(1.0f, 1.0f);
 glVertex3f(3, 2, 1);
+glTexCoord2f(0.0f, 1.0f);
 glVertex3f(3, 2, 0);
 
+glTexCoord2f(0.0f, 0.0f);
 glVertex3f(-3, 2, 0);
+glTexCoord2f(1.0f, 0.0f);
 glVertex3f(-3, 2, 1);
+glTexCoord2f(1.0f, 1.0f);
 glVertex3f(-2, 2, 1);
+glTexCoord2f(0.0f, 1.0f);
 glVertex3f(-2, 2, 0);
 
 //front
+glTexCoord2f(0.0f, 0.0f);
 glVertex3f(3, 2, 0);
+glTexCoord2f(1.0f, 0.0f);
 glVertex3f(3, 2, 1);
+glTexCoord2f(1.0f, 1.0f);
 glVertex3f(3, -2, 1);
+glTexCoord2f(0.0f, 1.0f);
 glVertex3f(3, -2, 0);
 
 //inside
+glTexCoord2f(0.0f, 0.0f);
 glVertex3f(1, -2, 0);
+glTexCoord2f(1.0f, 0.0f);
 glVertex3f(1, -2, 1);
+glTexCoord2f(1.0f, 1.0f);
 glVertex3f(1, -1, 1);
+glTexCoord2f(0.0f, 1.0f);
 glVertex3f(1, -1, 0);
 
+glTexCoord2f(0.0f, 0.0f);
 glVertex3f(1, -1, 0);
+glTexCoord2f(1.0f, 0.0f);
 glVertex3f(1, -1, 1);
+glTexCoord2f(1.0f, 1.0f);
 glVertex3f(-1, -1, 1);
+glTexCoord2f(0.0f, 1.0f);
 glVertex3f(-1, -1, 0);
 
+glTexCoord2f(0.0f, 0.0f);
 glVertex3f(-1, -1, 0);
+glTexCoord2f(1.0f, 0.0f);
 glVertex3f(-1, -1, 1);
+glTexCoord2f(1.0f, 1.0f);
 glVertex3f(-1, 1, 1);
+glTexCoord2f(0.0f, 1.0f);
 glVertex3f(-1, 1, 0);
 
+glTexCoord2f(0.0f, 0.0f);
 glVertex3f(-1, 1, 0);
+glTexCoord2f(1.0f, 0.0f);
 glVertex3f(-1, 1, 1);
+glTexCoord2f(1.0f, 1.0f);
 glVertex3f(2, 1, 1);
+glTexCoord2f(0.0f, 1.0f);
 glVertex3f(2, 1, 0);
 
+glTexCoord2f(0.0f, 0.0f);
 glVertex3f(2, 1, 0);
+glTexCoord2f(1.0f, 0.0f);
 glVertex3f(2, 1, 1);
+glTexCoord2f(1.0f, 1.0f);
 glVertex3f(2, 0, 1);
+glTexCoord2f(0.0f, 1.0f);
 glVertex3f(2, 0, 0);
 
+glTexCoord2f(0.0f, 0.0f);
 glVertex3f(2, 0, 0);
+glTexCoord2f(1.0f, 0.0f);
 glVertex3f(2, 0, 1);
+glTexCoord2f(1.0f, 1.0f);
 glVertex3f(0, 0, 1);
+glTexCoord2f(0.0f, 1.0f);
 glVertex3f(0, 0, 0);
 
 //small
+glTexCoord2f(0.0f, 0.0f);
 glVertex3f(2, -2, 0);
+glTexCoord2f(1.0f, 0.0f);
 glVertex3f(2, -2, 1);
+glTexCoord2f(1.0f, 1.0f);
 glVertex3f(2, -1, 1);
+glTexCoord2f(0.0f, 1.0f);
 glVertex3f(2, -1, 0);
 
-glEnd();
+glTexCoord2f(0.0f, 0.0f);
+glVertex3f(2.1, -2, 0);
+glTexCoord2f(1.0f, 0.0f);
+glVertex3f(2.1, -2, 1);
+glTexCoord2f(1.0f, 1.0f);
+glVertex3f(2.1, -1, 1);
+glTexCoord2f(0.0f, 1.0f);
+glVertex3f(2.1, -1, 0);
 
+glTexCoord2f(0.0f, 0.0f);
+glVertex3f(2, -1, 0);
+glTexCoord2f(1.0f, 0.0f);
+glVertex3f(2, -1, 1);
+glTexCoord2f(1.0f, 1.0f);
+glVertex3f(2.1, -1, 1);
+glTexCoord2f(0.0f, 1.0f);
+glVertex3f(2.1, -1, 0);
+
+glEnd();
+//glDisable(GL_TEXTURE_2D);
 }

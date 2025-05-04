@@ -17,6 +17,11 @@ typedef struct Camera
 } Camera;
 
 /**
+ * Check collision with the wall.
+ */
+int check_wall_collision(float x, float y);
+
+/**
  * Initialize the camera to the start position.
  */
 void init_camera(Camera* camera);
