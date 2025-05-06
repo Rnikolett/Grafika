@@ -8,9 +8,13 @@
 
 typedef struct Scene
 {
+    Camera camera;
     Model cube;
     Material material;
     GLuint texture_id;
+    GLuint cube_texture;
+    GLuint charmap_id;
+    int collected_cubes;  // Counter for collected cubes
 } Scene;
 
 
@@ -50,5 +54,20 @@ void draw_origin();
  * Draw the maze.
  */
 void draw_maze(const Scene* scene);
+
+/**
+ * Check if a ray intersects with a cube
+ */
+int ray_cube_intersection(const vec3 ray_origin, const vec3 ray_direction, const vec3 cube_position, float cube_size, float* distance);
+
+/**
+ * Convert screen coordinates to world coordinates
+ */
+void screen_to_world_coords(int screen_x, int screen_y, vec3* world_pos);
+
+/**
+ * Handle mouse interaction with cubes
+ */
+void handle_cube_interaction(Scene* scene, int mouse_x, int mouse_y, bool mouse_down);
 
 #endif /* SCENE_H */

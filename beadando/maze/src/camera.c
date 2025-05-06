@@ -39,6 +39,15 @@ int check_wall_collision(float x, float y) {
     return 0;
 }
 
+int check_cube_collision(float x, float y){
+
+    if (x > 2.5 - 0.2 && x < 2.5 + 0.2 && y > -1.5 - 0.2 && y < -1.5 + 0.2) return 1;
+    if (x > 1.5 - 0.2 && x < 1.5 + 0.2 && y > 0.5 - 0.2 && y < 0.5 + 0.2) return 1;
+    if (x > 0.5  - 0.2 && x < 0.5  + 0.2  && y > -0.5 - 0.2 && y < -0.5 + 0.2) return 1;
+    else return 0;
+}
+
+
 void init_camera(Camera* camera)
 {
     camera->position.x = 1.5;
@@ -74,6 +83,8 @@ void update_camera(Camera* camera, double time)
         camera->position.x = cam_pos_x;
         camera->position.y = cam_pos_y;
     }
+
+    
 }
 
 void set_view(const Camera* camera)
