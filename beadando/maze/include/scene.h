@@ -14,6 +14,7 @@ typedef struct Scene
     GLuint texture_id;
     GLuint cube_texture;
     GLuint help_texture;
+    GLuint floor_texture;
     GLuint charmap_id;
     int collected_cubes;
     float light_intensity;

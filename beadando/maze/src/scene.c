@@ -22,6 +22,7 @@ void init_scene(Scene* scene)
     scene->texture_id = load_texture("assets/textures/brickTexture.png");
     scene->cube_texture = load_texture("assets/textures/cube.jpg");
     scene->help_texture = load_texture("assets/textures/help.png");  // Load help texture
+    scene->floor_texture = load_texture("assets/textures/floor.jpg");
 
 	glEnable(GL_TEXTURE_2D);
 	//scene->texture_id = load_texture("assets/textures/cube.png");
@@ -176,6 +177,7 @@ void render_scene(const Scene* scene)
     set_lighting(scene);
     glBindTexture(GL_TEXTURE_2D, scene->texture_id);
     draw_maze();
+    glBindTexture(GL_TEXTURE_2D, scene->floor_texture);
     draw_maze_floor();
     draw_maze_ceiling();
     
@@ -214,10 +216,15 @@ void render_scene(const Scene* scene)
 
 void draw_maze_floor()
 {
+    glEnable(GL_TEXTURE_2D);
     glBegin(GL_QUADS);
+    glTexCoord2f(0.0f, 0.0f);
     glVertex3f(-3, 2, 0);
+    glTexCoord2f(0.0f, 1.0f);
     glVertex3f(3, 2, 0);
+    glTexCoord2f(1.0f, 1.0f);
     glVertex3f(3, -2, 0);
+    glTexCoord2f(1.0f, 0.0f);
     glVertex3f(-3, -2, 0);
     glEnd();
 
@@ -227,10 +234,16 @@ void draw_maze_floor()
 
 void draw_maze_ceiling()
 {
+    glEnable(GL_TEXTURE_2D);
+
     glBegin(GL_QUADS);
+    glTexCoord2f(0.0f, 0.0f);
     glVertex3f(-3, 2, 1);
+    glTexCoord2f(0.0f, 1.0f);
     glVertex3f(3, 2, 1);
+    glTexCoord2f(1.0f, 1.0f);
     glVertex3f(3, -2, 1);
+    glTexCoord2f(1.0f, 0.0f);
     glVertex3f(-3, -2, 1);
     glEnd();
 
