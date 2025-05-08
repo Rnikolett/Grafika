@@ -13,8 +13,11 @@ typedef struct Scene
     Material material;
     GLuint texture_id;
     GLuint cube_texture;
+    GLuint help_texture;
     GLuint charmap_id;
-    int collected_cubes;  // Counter for collected cubes
+    int collected_cubes;
+    float light_intensity;
+    bool help_visible;
 } Scene;
 
 
@@ -28,7 +31,7 @@ void init_scene(Scene* scene);
 /**
  * Set the lighting of the scene.
  */
-void set_lighting();
+void set_lighting(Scene* scene);
 
 /**
  * Set the current material.
@@ -46,14 +49,13 @@ void update_scene(Scene* scene);
 void render_scene(const Scene* scene);
 
 /**
- * Draw the origin of the world coordinate system.
- */
-void draw_origin();
-
-/**
  * Draw the maze.
  */
-void draw_maze(const Scene* scene);
+void draw_maze();
+
+void draw_maze_floor();
+
+void draw_maze_ceiling();
 
 /**
  * Check if a ray intersects with a cube

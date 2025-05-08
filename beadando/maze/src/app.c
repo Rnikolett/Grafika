@@ -125,6 +125,15 @@ void handle_app_events(App* app)
             case SDL_SCANCODE_D:
                 set_camera_side_speed(&(app->camera), -1);
                 break;
+            case SDL_SCANCODE_Q:
+                app->scene.light_intensity = fmax(0.0f, app->scene.light_intensity - 0.1f);
+                break;
+            case SDL_SCANCODE_E:
+                app->scene.light_intensity = fmin(2.0f, app->scene.light_intensity + 0.1f);
+                break;
+            case SDL_SCANCODE_F1:
+                app->scene.help_visible = !app->scene.help_visible;  // Toggle help visibility
+                break;
             default:
                 break;
             }
@@ -138,6 +147,10 @@ void handle_app_events(App* app)
             case SDL_SCANCODE_A:
             case SDL_SCANCODE_D:
                 set_camera_side_speed(&(app->camera), 0);
+                break;
+            case SDL_SCANCODE_Q:
+            case SDL_SCANCODE_E:
+                app->scene.light_intensity = fmin(2.0f, app->scene.light_intensity + 0);
                 break;
             default:
                 break;

@@ -20,7 +20,8 @@ void init_scene(Scene* scene)
     //scene->texture_id = load_texture("assets/textures/cube.png");
 	load_model(&(scene->cube), "assets/models/cube.obj");
     scene->texture_id = load_texture("assets/textures/brickTexture.png");
-    scene->cube_texture = load_texture("assets/textures/cube.png");
+    scene->cube_texture = load_texture("assets/textures/cube.jpg");
+    scene->help_texture = load_texture("assets/textures/help.png");  // Load help texture
 
 	glEnable(GL_TEXTURE_2D);
 	//scene->texture_id = load_texture("assets/textures/cube.png");
@@ -40,14 +41,22 @@ void init_scene(Scene* scene)
     scene->material.specular.blue = 0.0;
 
     scene->material.shininess = 0.0;
+
+    scene->light_intensity = 1.0f;
+    scene->help_visible = false;  // Initialize help visibility
 }
 
-void set_lighting()
+void set_lighting(Scene* scene)
 {
     float ambient_light[] = { 0.0f, 0.0f, 0.0f, 1.0f };
     float diffuse_light[] = { 1.0f, 1.0f, 1.0, 1.0f };
     float specular_light[] = { 0.0f, 0.0f, 0.0f, 1.0f };
     float position[] = { 0.0f, 0.0f, 10.0f, 1.0f };
+
+    // Scale the diffuse light by the intensity
+    diffuse_light[0] *= scene->light_intensity;
+    diffuse_light[1] *= scene->light_intensity;
+    diffuse_light[2] *= scene->light_intensity;
 
     glLightfv(GL_LIGHT0, GL_AMBIENT, ambient_light);
     glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse_light);
@@ -98,17 +107,77 @@ void update_scene(Scene* scene)
     
 }
 
+void render_help_image(const Scene* scene)
+{
+    if (!scene->help_visible) return;
+
+    glPushMatrix();
+    
+    // Disable lighting for the help image
+    glDisable(GL_LIGHTING); 
+    glClear(GL_COLOR_BUFFER_BIT);
+    
+    glMatrixMode(GL_PROJECTION);
+    glPushMatrix();
+    glLoadIdentity();
+    glOrtho(0, 1.0f, 1.0f, 0, -1.0f, 1.0f);
+    
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    
+    glEnable(GL_TEXTURE_2D);
+    //glBindTexture(GL_TEXTURE_2D, scene->help_texture);
+    glBindTexture(GL_TEXTURE_2D, scene->texture_id);
+    
+    glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+    
+    glBegin(GL_QUADS);
+    glTexCoord2f(0, 0); glVertex2f(0, 0);
+    glTexCoord2f(1, 0); glVertex2f(1, 0);
+    glTexCoord2f(1, 1); glVertex2f(1, 1);
+    glTexCoord2f(0, 1); glVertex2f(0, 1);
+    glEnd();
+    
+    glDisable(GL_TEXTURE_2D);
+    glEnable(GL_LIGHTING);
+    glMatrixMode(GL_PROJECTION);
+    glPopMatrix();
+    glMatrixMode(GL_MODELVIEW);
+    glPopMatrix();
+}
+
+/*
+void render_help_image(const Scene* scene)
+{
+    //testing on a wall
+    if (!scene->help_visible) return;
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, scene->help_texture);
+
+    glBegin(GL_QUADS);
+    glTexCoord2f(0.0f, 0.0f);
+    glVertex3f(1, -1, 0);
+    glTexCoord2f(0.0f, 1.0f);
+    glVertex3f(1, -1, 1);
+    glTexCoord2f(1.0f, 1.0f);
+    glVertex3f(2, -1, 1);
+    glTexCoord2f(1.0f, 0.0f);
+    glVertex3f(2, -1, 0);
+    glEnd();
+
+    glDisable(GL_TEXTURE_2D);
+
+}*/
 
 void render_scene(const Scene* scene)
 {
-
-    
     glShadeModel(GL_SMOOTH);
     set_material(&(scene->material));
-    set_lighting();
-    draw_origin();
+    set_lighting(scene);
     glBindTexture(GL_TEXTURE_2D, scene->texture_id);
-    draw_maze(&scene);
+    draw_maze();
+    draw_maze_floor();
+    draw_maze_ceiling();
     
     // Apply rotation around the object's center
     double current_time = (double)SDL_GetTicks() / 1000;
@@ -127,62 +196,54 @@ void render_scene(const Scene* scene)
         glBindTexture(GL_TEXTURE_2D, scene->cube_texture);
         // Save the current matrix
         glPushMatrix();
-        
         // Move to the cube's position
         glTranslatef(cube_positions[i][0], cube_positions[i][1], cube_positions[i][2]);
         glScalef(0.1, 0.1, 0.1);
         glRotatef(rotation_angle, 1, 1, 0);
-        
         // Draw the model
         draw_model(&(scene->cube));
         
         // Restore the previous matrix
         glPopMatrix();
-    
         glDisable(GL_TEXTURE_2D);
     }
-    // Display the counter
-    char counter_text[32];
-    sprintf(counter_text, "Collected Cubes: %d", scene->collected_cubes);
-    
-    }
-
-void draw_origin()
-{
-    glBegin(GL_LINES);
-
-    glColor3f(1, 0, 0);
-    glVertex3f(0, 0, 0);
-    glVertex3f(1, 0, 0);
-
-    glColor3f(0, 1, 0);
-    glVertex3f(0, 0, 0);
-    glVertex3f(0, 1, 0);
-
-    glColor3f(0, 0, 1);
-    glVertex3f(0, 0, 0);
-    glVertex3f(0, 0, 1);
-
-    glEnd();
+    // Render help image if visible
+    render_help_image(scene);
 }
 
-void draw_maze(const Scene* scene)
+
+void draw_maze_floor()
+{
+    glBegin(GL_QUADS);
+    glVertex3f(-3, 2, 0);
+    glVertex3f(3, 2, 0);
+    glVertex3f(3, -2, 0);
+    glVertex3f(-3, -2, 0);
+    glEnd();
+
+    glDisable(GL_TEXTURE_2D);
+
+}
+
+void draw_maze_ceiling()
+{
+    glBegin(GL_QUADS);
+    glVertex3f(-3, 2, 1);
+    glVertex3f(3, 2, 1);
+    glVertex3f(3, -2, 1);
+    glVertex3f(-3, -2, 1);
+    glEnd();
+
+    glDisable(GL_TEXTURE_2D);
+}
+void draw_maze()
 {
     glLineWidth(1.0f); 
     
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    // Enable texturing and bind the texture
-    //glBindTexture(GL_TEXTURE_2D, scene->texture_id);
     glEnable(GL_TEXTURE_2D);
 
 glBegin(GL_QUADS);
-//glColor3f(1, 0, 0);
-//floor
-glVertex3f(-3, 2, 0);
-glVertex3f(3, 2, 0);
-glVertex3f(3, -2, 0);
-glVertex3f(-3, -2, 0);
-
     // Behind wall
     glTexCoord2f(0.0f, 0.0f);
     glVertex3f(-3, 2, 0);
