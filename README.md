@@ -1,6 +1,8 @@
 # Grafika beadandó feladat
 
-## A Játék témája: Egy bejárható labirintusban a játékosnak meg kell találnia a labirintusból való kivezető utat. A labirintusban el vannak rejtve objektumok amiket a játékosnak meg kell találnia.
+## A Játék témája:
+
+Egy bejárható labirintusban a játékosnak meg kell találnia a labirintusból való kivezető utat. A labirintusban el vannak rejtve objektumok amiket a játékosnak meg kell találnia.
 
 ## A játékos mozgása:
   Előre: W
