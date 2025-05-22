@@ -6,16 +6,21 @@ Egy bejárható labirintusban a játékosnak meg kell találnia a labirintusból
 
 ## A játékos mozgása:
   Előre: W
+  
   Balra: A
+  
   Hátra: S
+  
   Jobbra: D
   
 ## Fényerő módosítása:
   Fényerő növelése: E
+  
   Fényerő csökkentése: Q
   
 ## Elrejtett objektumok:
   Száma: 3
+  
   Típusa: kocka
 
 Súgó F1
